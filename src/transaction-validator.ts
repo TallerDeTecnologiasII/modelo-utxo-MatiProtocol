@@ -22,9 +22,9 @@ export class TransactionValidator {
     let totalInput = 0;
     let totalOutput = 0;
 
-    if (transaction.inputs.length === 0) errors.push(createValidationError(VALIDATION_ERRORS.EMPTY_INPUTS, 'Transaccion sin entradas'));
+    if (transaction.inputs.length == 0) errors.push(createValidationError(VALIDATION_ERRORS.EMPTY_INPUTS, 'Transaccion sin entradas'));
 
-    if (transaction.outputs.length === 0) errors.push(createValidationError(VALIDATION_ERRORS.EMPTY_OUTPUTS, 'Transaccion sin salidas'));
+    if (transaction.outputs.length == 0) errors.push(createValidationError(VALIDATION_ERRORS.EMPTY_OUTPUTS, 'Transaccion sin salidas'));
 
     const transactionData = this.createTransactionDataForSigning_(transaction);
 
@@ -63,13 +63,13 @@ export class TransactionValidator {
       totalOutput += output.amount;
     }
 
-    if (totalInput !== totalOutput) 
+    if (totalInput != totalOutput) 
     {
       errors.push(createValidationError(VALIDATION_ERRORS.AMOUNT_MISMATCH, `Input and output amounts do not match: ${totalInput} != ${totalOutput}`, {totalInput, totalOutput}));
     }
 
     return {
-      valid: errors.length === 0,
+      valid: errors.length == 0,
       errors
     };
   }
