@@ -14,7 +14,26 @@ export function encodeTransaction(transaction: Transaction): Buffer {
   // 2. Use length-prefixed strings for variable-length data (id, signatures, public keys)
   // 3. Use compact representations for counts (e.g., 1 byte for number of inputs/outputs if < 256)
 
-  throw new Error('Binary encoding not implemented - this is a bonus challenge!');
+  const idBuffer = encodeString(transaction.id);
+  const stampBuffer = Buffer.alloc(8);
+  stampBuffer.writeBigUInt64BE(BigInt(transaction.timestamp)); 
+  const inputCountBuffer = Buffer.from([transaction.inputs.length]);
+  const inputsBuffer = Buffer.concat(transaction.inputs.map(input => {
+    const utxoIdBuffer = encodeString(input.utxoId.txId);
+    const ownerBuffer = encodeString(input.owner);
+    const sigBuffer = encodeString(input.signature);
+    return Buffer.concat([utxoIdBuffer, ownerBuffer, sigBuffer]);
+  }))
+
+  return Buffer.concat([idBuffer, stampBuffer, inputCountBuffer, inputsBuffer]);
+
+  //throw new Error('Binary encoding not implemented - this is a bonus challenge!');
+}
+
+function encodeString(str: string): Buffer {
+  const strBuf = Buffer.from(str, 'utf8');
+  if (strBuf.length > 255) throw new Error('String too long');
+  return Buffer.concat([Buffer.from([strBuf.length]), strBuf]);
 }
 
 /**
@@ -28,6 +47,7 @@ export function decodeTransaction(buffer: Buffer): Transaction {
 
   throw new Error('Binary decoding not implemented - this is a bonus challenge!');
 }
+
 
 /**
  * Compare encoding efficiency between JSON and binary representations
